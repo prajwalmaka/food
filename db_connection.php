@@ -11,7 +11,7 @@ $dbname = "restaurant";
 $host = "db";
 $user = "root";
 $password = "root";
-$database = "mydb";
+$database = "restaurant";
 
 // Enable error reporting
 ini_set('display_errors', 1);
