@@ -1,53 +1,63 @@
 pipeline {
-	agent any
+    agent any
 
-	environment {
-		APP_NAME = "php-app"
+    environment {
+        APP_NAME = "php-app"
+    }
 
-	}
+    stages {
 
-	
-	stages {
+        stage('Checkout Code') {
+            steps {
+                echo "Fetching latest code from GitHub..."
+                git 'https://github.com/prajwalmaka/food.git'
+            }
+        }
 
-		stage('Checkout Code') {
-			steps {
-				echo "Fetching latest code from Github..."
-				git 'https://github.com/prajwalmaka/food.git'
-			}
-		}
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker containers..."
+                sh 'docker compose build'
+            }
+        }
 
-	
-		stage('Build Docker Image') {
-			steps {
-				echo "Building Docker containers..."
-				sh 'docker compose build'
-			}
-		}
+        stage('Deploy Application') {
+            steps {
+                echo "Stopping old containers..."
+                sh 'docker compose down'
 
-		stage('Deploy Application') {
-			steps {
-				echo "Stopping old containers..."
-				sh 'docker compose down'
-				echo "Starting new containers..."
-				sh 'docker compose up -d'
-			}
-		}
+                echo "Starting new containers..."
+                sh 'docker compose up -d'
+            }
+        }
 
-		stage('Cleanup Docker Resources') {
-			steps {
-				echo "CLeaning unused Docker resources..."
-				sh 'docker system prune -f'	
-			}
-		}
+        stage('Verify Deployment') {
+            steps {
+                echo "Checking if application is running..."
 
-	post {
+                sh '''
+                sleep 10
+                curl -f http://localhost:8081 || exit 1
+                '''
+            }
+        }
 
-		success {
-			echo "Application deployed successfully..!"
-		}
+        stage('Cleanup Docker Resources') {
+            steps {
+                echo "Cleaning unused Docker resources..."
+                sh 'docker system prune -f'
+            }
+        }
+    }
 
-		failure {
-			echo "Pipeline failed..!"
-		}
-	}
-}	
+    post {
+
+        success {
+            echo "Application deployed successfully!"
+        }
+
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
+}
