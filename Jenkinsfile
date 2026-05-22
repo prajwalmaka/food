@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo "Fetching latest code from GitHub..."
-                git 'https://github.com/prajwalmaka/food.git'
+                git branch: 'main', url: 'https://github.com/prajwalmaka/food.git'
             }
         }
 
