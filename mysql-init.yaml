@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init
+data:
+  restaurant.sql: |
+    CREATE DATABASE IF NOT EXISTS restaurant;
+    USE restaurant;
+
+    CREATE TABLE IF NOT EXISTS menuitem (
+      itemId INT AUTO_INCREMENT PRIMARY KEY,
+      itemName VARCHAR(255),
+      catName VARCHAR(255),
+      price VARCHAR(255),
+      status VARCHAR(20),
+      description VARCHAR(255),
+      image VARCHAR(255),
+      is_popular TINYINT(1)
+    );
